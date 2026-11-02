@@ -12,6 +12,14 @@ export function createApp(config: RigConfig = loadConfig()) {
 
   app.get('/health', (c) => c.json({ ok: true, lane: lane().id }));
 
+  // Plan § 2b. Same readNight result the page renders, as JSON — no reshaping here,
+  // so the page and this cannot disagree (ADR 0001). null: no file for the night.
+  app.get('/api/digest/:night', (c) => {
+    const digest = readNight(config.runsDir, c.req.param('night'));
+    if (digest === null) return c.json({ error: `no run log for ${c.req.param('night')}` }, 404);
+    return c.json(digest);
+  });
+
   app.get('/', (c) =>
     c.html(
       <Layout title="status" lane={lane()}>
