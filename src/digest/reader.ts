@@ -5,7 +5,7 @@ import type { DigestRow, NightDigest, ReadNight, RunStatus } from './types.js';
 // Plan § 1. Folds runs/<night>.jsonl into one row per job, sorted by job — the page and
 // the JSON both read from here, so they cannot disagree (ADR 0001).
 
-type RunEvent = {
+export type RunEvent = {
   at: string;
   job: string;
   status: RunStatus;
@@ -14,7 +14,9 @@ type RunEvent = {
 };
 
 // One JSONL line in, or null if it doesn't parse: the line is only counted, never thrown.
-function parseEvent(line: string): RunEvent | null {
+// Exported so the board's line counts (src/digest/counts.ts) accept exactly the same
+// lines — board and digest cannot disagree (ADR 0001).
+export function parseEvent(line: string): RunEvent | null {
   let raw: unknown;
   try {
     raw = JSON.parse(line);
